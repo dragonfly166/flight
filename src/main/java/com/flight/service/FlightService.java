@@ -1,17 +1,23 @@
 package com.flight.service;
 
 import com.flight.config.AirlineConfig;
+import com.flight.domain.dto.Airport;
 import com.flight.domain.dto.FlightDetail;
 import com.flight.domain.result.FlightInfo;
 import com.flight.domain.result.FlightItem;
+import com.flight.mapper.airline1.FlightMapper1;
+import com.flight.mapper.airline2.FlightMapper2;
+import com.flight.mapper.airline3.FlightMapper3;
 import com.flight.util.UserUtil;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +31,13 @@ public class FlightService {
     private AirlineConfig airline;
 
     @Autowired
-    private com.flight.mapper.airline1.FlightMapper flightMapper1;
+    private FlightMapper1 flightMapper1;
 
     @Autowired
-    private com.flight.mapper.airline2.FlightMapper flightMapper2;
+    private FlightMapper2 flightMapper2;
 
     @Autowired
-    private com.flight.mapper.airline3.FlightMapper flightMapper3;
+    private FlightMapper3 flightMapper3;
 
     /**
      * 获取折扣，至多减50%
@@ -138,5 +144,19 @@ public class FlightService {
         List<FlightDetail> flights = getDiscount(flights1, flights2, flights3);
 
         return getRoute(flights, fromAirport, toAirport);
+    }
+
+    /**
+     * 获取所有机场信息
+     */
+    public Set<Airport> getAirports() {
+        List<Airport> airports1 = flightMapper1.queryAirports();
+        List<Airport> airports2 = flightMapper2.queryAirports();
+        List<Airport> airports3 = flightMapper3.queryAirports();
+
+        Set<Airport> airportSet = new HashSet<>(airports1);
+        airportSet.addAll(airports2);
+        airportSet.addAll(airports3);
+        return airportSet;
     }
 }

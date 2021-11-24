@@ -1,15 +1,17 @@
-package com.flight.mapper.airline3;
+package com.flight.mapper.airline1;
 
+import com.flight.domain.dto.Airport;
 import com.flight.domain.dto.FlightDetail;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
 
 /**
  * @author sunlongfei
  */
 @Mapper
-public interface FlightMapper {
+public interface FlightMapper1 {
 
     /**
      * 查询符合条件的航班
@@ -29,4 +31,11 @@ public interface FlightMapper {
      */
     @Select("SELECT COUNT(*) FROM flight_record, passenger WHERE passenger_id = passenger.id AND id_card = #{idCardNum}")
     Integer queryNumOfTaking(String idCardNum);
+
+    /**
+     * 查询所有机场
+     */
+    @Select("SELECT * FROM airport")
+    @Result(column = "transit_time", property = "transitTime")
+    List<Airport> queryAirports();
 }

@@ -6,7 +6,7 @@ import lombok.Data;
  * @author sunlongfei
  */
 @Data
-public class User {
+public class Passenger {
 
     private String name;
 
