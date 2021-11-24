@@ -1,6 +1,7 @@
 package com.flight.service;
 
 import com.flight.config.AirlineConfig;
+import com.flight.domain.dao.PlaneSeatStruct;
 import com.flight.domain.dto.Airport;
 import com.flight.domain.dto.FlightDetail;
 import com.flight.domain.request.FlightIdInfo;
@@ -30,7 +31,7 @@ import org.springframework.stereotype.Service;
 public class FlightService {
 
     @Autowired
-    private AirlineConfig airline;
+    private AirlineConfig airlineConfig;
 
     @Autowired
     private FlightMapper1 flightMapper1;
@@ -42,7 +43,10 @@ public class FlightService {
     private FlightMapper3 flightMapper3;
 
     /**
-     * 获取折扣，至多减50%
+     * 获取折扣
+     * 单人购票每购买一次票，指定航班公司所有票减1%
+     * 团体购票有多少人则减百分之多少
+     * 至多减50%
      */
     private List<FlightDetail> getDiscount(List<FlightDetail> flights1, List<FlightDetail> flights2, List<FlightDetail> flights3) {
         int discount1 = 0, discount2 = 0, discount3 = 0;
@@ -132,15 +136,15 @@ public class FlightService {
 
         List<FlightDetail> flights1 = flightMapper1.queryFlights(fromAirport, toAirport, days);
         for (FlightDetail flight: flights1) {
-            flight.setAirline(airline.getAirline1());
+            flight.setAirline(airlineConfig.getAirline1());
         }
         List<FlightDetail> flights2 = flightMapper2.queryFlights(fromAirport, toAirport, days);
         for (FlightDetail flight: flights2) {
-            flight.setAirline(airline.getAirline1());
+            flight.setAirline(airlineConfig.getAirline2());
         }
         List<FlightDetail> flights3 = flightMapper3.queryFlights(fromAirport, toAirport, days);
         for (FlightDetail flight: flights3) {
-            flight.setAirline(airline.getAirline1());
+            flight.setAirline(airlineConfig.getAirline3());
         }
 
         List<FlightDetail> flights = getDiscount(flights1, flights2, flights3);
@@ -171,32 +175,45 @@ public class FlightService {
 
         FlightDetail flightDetail;
         for (FlightIdInfo idInfo: idInfoList) {
-            switch (idInfo.getAirline()) {
-                case "airline2":
-                    flightDetail = flightMapper2.queryFlightDetail(idInfo.getId());
-                    flightDetail.setAirline(idInfo.getAirline());
-                    flights.add(flightDetail);
-                    break;
-                case "airline3":
-                    flightDetail = flightMapper3.queryFlightDetail(idInfo.getId());
-                    flightDetail.setAirline(idInfo.getAirline());
-                    flights.add(flightDetail);
-                    break;
-                default:
-                    flightDetail = flightMapper1.queryFlightDetail(idInfo.getId());
-                    flightDetail.setAirline(idInfo.getAirline());
-                    flights.add(flightDetail);
-                    break;
+            if (airlineConfig.getAirline1().equals(idInfo.getAirline())) {
+                flightDetail = flightMapper1.queryFlightDetail(idInfo.getId());
+                flightDetail.setAirline(idInfo.getAirline());
+                flights.add(flightDetail);
+            } else if(airlineConfig.getAirline2().equals(idInfo.getAirline())) {
+                flightDetail = flightMapper2.queryFlightDetail(idInfo.getId());
+                flightDetail.setAirline(idInfo.getAirline());
+                flights.add(flightDetail);
+            } else {
+                flightDetail = flightMapper3.queryFlightDetail(idInfo.getId());
+                flightDetail.setAirline(idInfo.getAirline());
+                flights.add(flightDetail);
             }
         }
 
         flights = getDiscount(flights, new ArrayList<>(0), new ArrayList<>(0));
         for (FlightDetail flight: flights) {
-            FlightDetailItem item = new FlightDetailItem(flight.getId(), flight.getAirline(), flight.getPlaneTypeName(),
-                flight.getCost(), flight.getSeatNum());
+            FlightDetailItem item = new FlightDetailItem(flight.getId(), flight.getAirline(), flight.getPlaneTypeId(),
+                flight.getPlaneTypeName(), flight.getCost(), flight.getSeatNum());
             result.add(item);
         }
 
         return result;
+    }
+
+    /**
+     * 查询可用的座位
+     */
+    public List<PlaneSeatStruct> getAvailableSeats(Integer flightId, String airline, String type, Integer planeTypeId) {
+        List<PlaneSeatStruct> seats;
+
+        if (airlineConfig.getAirline1().equals(airline)) {
+            seats = flightMapper1.queryAvailableSeats(flightId, type, planeTypeId);
+        } else if (airlineConfig.getAirline2().equals(airline)) {
+            seats = flightMapper2.queryAvailableSeats(flightId, type, planeTypeId);
+        } else {
+            seats = flightMapper3.queryAvailableSeats(flightId, type, planeTypeId);
+        }
+
+        return seats;
     }
 }

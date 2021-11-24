@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import lombok.Data;
 
 /**
+ * 航班信息
  * @author sunlongfei
  */
 @Data
@@ -24,6 +25,8 @@ public class FlightDetail {
   private Integer transitTime;
 
   private Integer seatNum;
+
+  private Integer planeTypeId;
 
   private String planeTypeName;
 

@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * 航班列表项
+ * 航班列表返回结果项
  * @author sunlongfei
  */
 @Data

@@ -3,6 +3,7 @@ package com.flight.domain.dto;
 import lombok.Data;
 
 /**
+ * 机场部分信息
  * @author sunlongfei
  */
 @Data

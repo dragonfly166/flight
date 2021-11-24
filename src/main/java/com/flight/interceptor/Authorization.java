@@ -30,9 +30,15 @@ public class Authorization implements HandlerInterceptor {
         if (cookies == null) {
             throw new Exception("缺少cookie");
         }
-        HttpSession session = sMap.get(cookies[0].getValue());
-        UserUtil.setUsers((String) session.getAttribute("users"));
 
-        return true;
+        for (Cookie cookie: cookies) {
+            HttpSession session = sMap.get(cookie.getValue());
+            if (session != null) {
+                UserUtil.setUsers((String) session.getAttribute("users"));
+                return true;
+            }
+        }
+
+        throw new Exception("cookie错误");
     }
 }
