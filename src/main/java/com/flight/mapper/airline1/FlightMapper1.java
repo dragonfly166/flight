@@ -38,4 +38,16 @@ public interface FlightMapper1 {
     @Select("SELECT * FROM airport")
     @Result(column = "transit_time", property = "transitTime")
     List<Airport> queryAirports();
+
+    /**
+     * 查询航班详情
+     */
+    @Select("SELECT flight.id, plane_type.name AS planeTypeName, start_time AS startTime, end_time AS endTime, cost,"
+                + "from_airport_id AS fromAirportId, to_airport_id AS toAirportId, transit_time AS transitTime, "
+                + "(SELECT COUNT(*) FROM plane_seat_struct WHERE plane_seat_struct.plane_type_id = flight.plane_type_id "
+                + "AND plane_seat_struct.id NOT IN (SELECT flight_record.plane_seat_struct_id FROM flight_record)) AS seatNum,"
+                + "(SELECT airport.name FROM airport WHERE airport.id = from_airport_id) AS fromAirport, (SELECT airport.name FROM airport WHERE airport.id = to_airport_id) AS toAirport "
+                + "FROM flight, plane_type WHERE plane_type_id = plane_type.id "
+                + "AND flight.id = #{id}")
+    FlightDetail queryFlightDetail(Integer id);
 }

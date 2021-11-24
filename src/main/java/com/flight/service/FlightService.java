@@ -3,6 +3,8 @@ package com.flight.service;
 import com.flight.config.AirlineConfig;
 import com.flight.domain.dto.Airport;
 import com.flight.domain.dto.FlightDetail;
+import com.flight.domain.request.FlightIdInfo;
+import com.flight.domain.result.FlightDetailItem;
 import com.flight.domain.result.FlightInfo;
 import com.flight.domain.result.FlightItem;
 import com.flight.mapper.airline1.FlightMapper1;
@@ -158,5 +160,43 @@ public class FlightService {
         airportSet.addAll(airports2);
         airportSet.addAll(airports3);
         return airportSet;
+    }
+
+    /**
+     * 获取航班详情
+     */
+    public List<FlightDetailItem> getFlightsDetail(List<FlightIdInfo> idInfoList) {
+        List<FlightDetail> flights = new ArrayList<>(2);
+        List<FlightDetailItem> result = new ArrayList<>(2);
+
+        FlightDetail flightDetail;
+        for (FlightIdInfo idInfo: idInfoList) {
+            switch (idInfo.getAirline()) {
+                case "airline2":
+                    flightDetail = flightMapper2.queryFlightDetail(idInfo.getId());
+                    flightDetail.setAirline(idInfo.getAirline());
+                    flights.add(flightDetail);
+                    break;
+                case "airline3":
+                    flightDetail = flightMapper3.queryFlightDetail(idInfo.getId());
+                    flightDetail.setAirline(idInfo.getAirline());
+                    flights.add(flightDetail);
+                    break;
+                default:
+                    flightDetail = flightMapper1.queryFlightDetail(idInfo.getId());
+                    flightDetail.setAirline(idInfo.getAirline());
+                    flights.add(flightDetail);
+                    break;
+            }
+        }
+
+        flights = getDiscount(flights, new ArrayList<>(0), new ArrayList<>(0));
+        for (FlightDetail flight: flights) {
+            FlightDetailItem item = new FlightDetailItem(flight.getId(), flight.getAirline(), flight.getPlaneTypeName(),
+                flight.getCost(), flight.getSeatNum());
+            result.add(item);
+        }
+
+        return result;
     }
 }
