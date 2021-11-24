@@ -21,6 +21,7 @@ public class UserController {
     @PostMapping("/login")
     public ApiResult<?> login(HttpServletRequest request,
         @NotEmpty(message = "登录用户不能为空") @RequestParam("users") String usersString) {
+
         HttpSession session = request.getSession();
         session.setAttribute("users", usersString);
         session.setMaxInactiveInterval(24 * 60 * 60);
