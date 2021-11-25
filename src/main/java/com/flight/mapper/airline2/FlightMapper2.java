@@ -55,8 +55,8 @@ public interface FlightMapper2 {
     /**
      * 查询可用的座位信息
      */
-    @Select("SELECT * FROM plane_seat_struct WHERE plane_type_id = #{planeTypeId} "
-            + "AND id NOT IN (SELECT plane_seat_struct_id FROM flight_record WHERE is_deleted = 0 AND create_time = #{time}) AND type = #{type}")
+    @Select("SELECT * FROM plane_seat_struct WHERE plane_type_id = #{planeTypeId} AND type = #{type} "
+                + "AND id NOT IN (SELECT plane_seat_struct_id FROM flight_record WHERE is_deleted = 0 AND create_time = #{time} AND flight_id = #{flightId})")
     @Result(column = "plane_type_id", property = "planeTypeId")
     List<PlaneSeatStruct> queryAvailableSeats(Integer flightId, String type, Integer planeTypeId, String time);
 }
