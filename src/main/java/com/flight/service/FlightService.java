@@ -12,6 +12,8 @@ import com.flight.mapper.airline1.FlightMapper1;
 import com.flight.mapper.airline2.FlightMapper2;
 import com.flight.mapper.airline3.FlightMapper3;
 import com.flight.util.UserUtil;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +43,7 @@ public class FlightService {
 
     /**
      * 获取航班列表折扣
-     * 单人购票每购买一次票，指定航班公司所有票减1%
+     * 单人购票每购买一次票，指定航空公司所有票减1%
      * 团体购票有多少人则减百分之多少
      * 至多减50%
      */
@@ -57,13 +59,13 @@ public class FlightService {
         }
 
         for (FlightDetail flight: flights1) {
-            flight.setCost(flight.getCost() * (100 - Math.max(50, discount1)) / 100);
+            flight.setCost(flight.getCost() * (100 - Math.min(50, discount1)) / 100);
         }
         for (FlightDetail flight: flights2) {
-            flight.setCost(flight.getCost() * (100 - Math.max(50, discount2)) / 100);
+            flight.setCost(flight.getCost() * (100 - Math.min(50, discount2)) / 100);
         }
         for (FlightDetail flight: flights3) {
-            flight.setCost(flight.getCost() * (100 - Math.max(50, discount3)) / 100);
+            flight.setCost(flight.getCost() * (100 - Math.min(50, discount3)) / 100);
         }
 
         List<FlightDetail> flights = new ArrayList<>(flights1);
@@ -75,7 +77,7 @@ public class FlightService {
 
     /**
      * 获取航班详情折扣
-     * 单人购票每购买一次票，指定航班公司所有票减1%
+     * 单人购票每购买一次票，指定航空公司所有票减1%
      * 团体购票有多少人则减百分之多少
      * 至多减50%
      */
@@ -94,7 +96,7 @@ public class FlightService {
                 }
             }
 
-            item.setCost(item.getCost() * (100 - discount) / 100);
+            item.setCost(item.getCost() * Math.min(100 - discount, 50) / 100);
         }
 
         return detailItems;
@@ -104,7 +106,8 @@ public class FlightService {
     /**
      * 获取行程
      */
-    private List<FlightItem> getRoute(List<FlightDetail> flights, String fromAirport, String toAirport) {
+    private List<FlightItem> getRoute(List<FlightDetail> flights, String fromAirport, String toAirport)
+        throws ParseException {
         Map<String, FlightDetail> firstFlightMap = new HashMap<>(flights.size());
         List<FlightItem> routes = new ArrayList<>(flights.size());
         List<List<FlightDetail>> flightsList = new ArrayList<>(flights.size());
@@ -133,19 +136,28 @@ public class FlightService {
         for (List<FlightDetail> flightsForRoute: flightsList) {
             List<FlightInfo> flightInfos = new ArrayList<>(2);
             Integer cost = 0;
+            boolean hasSeat = true;
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
             for (FlightDetail flight: flightsForRoute) {
+                if (flight.getSeatNum() == 0) {
+                    hasSeat = false;
+                }
+
                 FlightInfo flightInfo = new FlightInfo(flight.getId(), flight.getAirline(), fromAirport,
-                    toAirport, flight.getPlaneTypeId(), flight.getPlaneTypeName(), flight.getStartTime(),
-                    flight.getEndTime(), flight.getSeatNum());
+                    toAirport, flight.getPlaneTypeId(), flight.getPlaneTypeName(), sdf.format(flight.getStartTime()),
+                    sdf.format(flight.getEndTime()), flight.getSeatNum());
                 flightInfos.add(flightInfo);
                 cost += flight.getCost();
             }
+            if (!hasSeat) {
+                continue;
+            }
 
-            long startTime = flightInfos.get(0).getStartTime().getTime() % (24 * 60 * 60 * 1000);
-            long endTime = flightInfos.get(0).getEndTime().getTime() % (24 * 60 * 60 * 1000);
+            long startTime = sdf.parse(flightInfos.get(0).getStartTime()).getTime();
+            long endTime = sdf.parse(flightInfos.get(0).getEndTime()).getTime();
             if (flightInfos.size() == 2) {
-                endTime = flightInfos.get(1).getEndTime().getTime() % (24 * 60 * 60 * 1000);
+                endTime = sdf.parse(flightInfos.get(1).getEndTime()).getTime();
             }
 
             routes.add(new FlightItem(flightInfos, (int) (endTime - startTime) / (1000 * 60), cost));
@@ -157,7 +169,8 @@ public class FlightService {
     /**
      * 获取航班列表
      */
-    public List<FlightItem> getList(String fromAirport, String toAirport, String time) {
+    public List<FlightItem> getList(String fromAirport, String toAirport, String time)
+        throws ParseException {
         List<FlightDetail> flights1 = flightMapper1.queryFlights(fromAirport, toAirport, time);
         for (FlightDetail flight: flights1) {
             flight.setAirline(airlineConfig.getAirline1());

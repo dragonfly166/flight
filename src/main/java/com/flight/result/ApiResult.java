@@ -9,11 +9,11 @@ import lombok.Data;
 @Data
 public class ApiResult<T> {
 
-    private T data;
-
     private String code;
 
     private String msg;
+
+    private T data;
 
     public ApiResult(String code, String msg, T data) {
         this.code = code;

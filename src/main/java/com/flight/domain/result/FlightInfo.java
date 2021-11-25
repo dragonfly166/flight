@@ -24,9 +24,9 @@ public class FlightInfo {
 
     private String planeTypeName;
 
-    private Timestamp startTime;
+    private String startTime;
 
-    private Timestamp endTime;
+    private String endTime;
 
     private Integer seatNum;
 }
