@@ -96,7 +96,7 @@ public class FlightService {
                 }
             }
 
-            item.setCost(item.getCost() * Math.min(100 - discount, 50) / 100);
+            item.setCost(item.getCost() * (100 - Math.min(discount, 50)) / 100);
         }
 
         return detailItems;
@@ -217,6 +217,11 @@ public class FlightService {
             } else {
                 flightItems = flightMapper3.queryFlightDetail(request.getId(), request.getTime());
             }
+
+            for (FlightDetailItem item: flightItems) {
+                item.setAirline(request.getAirline());
+            }
+
             detailItems.addAll(flightItems);
         }
 

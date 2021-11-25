@@ -1,6 +1,5 @@
 package com.flight.domain.result;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -17,6 +16,8 @@ public class FlightDetailItem {
     private Integer planeTypeId;
 
     private String planeTypeName;
+
+    private String type;
 
     private Integer cost;
 

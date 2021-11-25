@@ -21,7 +21,7 @@ public class ExceptionController {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiResult<?> globalException(Exception e) {
-        log.info(e.getMessage());
+        log.error(e.getMessage());
         return ApiResult.fail(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 }
