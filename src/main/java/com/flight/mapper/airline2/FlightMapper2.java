@@ -58,5 +58,5 @@ public interface FlightMapper2 {
     @Select("SELECT * FROM plane_seat_struct WHERE plane_type_id = #{planeTypeId} "
             + "AND id NOT IN (SELECT plane_seat_struct_id FROM flight_record WHERE is_deleted = 0 AND create_time = #{time}) AND type = #{type}")
     @Result(column = "plane_type_id", property = "planeTypeId")
-    List<PlaneSeatStruct> queryAvailableSeats(@Param("") Integer flightId, String type, Integer planeTypeId, String time);
+    List<PlaneSeatStruct> queryAvailableSeats(Integer flightId, String type, Integer planeTypeId, String time);
 }
