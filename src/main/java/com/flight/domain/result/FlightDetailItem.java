@@ -8,7 +8,6 @@ import lombok.Data;
  * @author sunlongfei
  */
 @Data
-@AllArgsConstructor
 public class FlightDetailItem {
 
     private Integer flightId;

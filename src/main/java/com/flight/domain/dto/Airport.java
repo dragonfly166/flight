@@ -7,7 +7,7 @@ import lombok.Data;
  * @author sunlongfei
  */
 @Data
-public class Airport {
+public class Airport implements Comparable<Airport> {
 
   private String name;
 
@@ -16,4 +16,9 @@ public class Airport {
   private String country;
 
   private Integer transitTime;
+
+  @Override
+  public int compareTo(Airport airport) {
+    return name.compareTo(airport.getName());
+  }
 }

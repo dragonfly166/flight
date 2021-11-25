@@ -2,7 +2,7 @@ package com.flight.controller;
 
 import com.flight.domain.dao.PlaneSeatStruct;
 import com.flight.domain.dto.Airport;
-import com.flight.domain.request.FlightIdInfo;
+import com.flight.domain.request.FlightDetailRequest;
 import com.flight.domain.result.FlightDetailItem;
 import com.flight.domain.result.FlightItem;
 import com.flight.result.ApiResult;
@@ -58,10 +58,10 @@ public class FlightController {
     @GetMapping("/detail")
     public ApiResult<List<FlightDetailItem>> detail(@NotBlank(message = "flights不能为空") @RequestParam("flights") String flights) {
         Gson gson = new Gson();
-        List<FlightIdInfo> idInfoList =
-            gson.fromJson(flights, new TypeToken<List<FlightIdInfo>>() {}.getType());
+        List<FlightDetailRequest> requestList =
+            gson.fromJson(flights, new TypeToken<List<FlightDetailRequest>>() {}.getType());
 
-        List<FlightDetailItem> flightsDetail = flightService.getFlightsDetail(idInfoList);
+        List<FlightDetailItem> flightsDetail = flightService.getFlightsDetail(requestList);
 
         return ApiResult.success(flightsDetail);
     }
@@ -73,9 +73,10 @@ public class FlightController {
     public ApiResult<List<PlaneSeatStruct>> seat(@RequestParam("flightId") Integer flightId,
         @NotBlank(message = "airline不能为空") @RequestParam("airline") String airline,
         @NotBlank(message = "type不能为空") @RequestParam("type") String type,
-        @RequestParam("planeTypeId") Integer planeTypeId) {
+        @RequestParam("planeTypeId") Integer planeTypeId,
+        @NotBlank(message = "time不能为空") @RequestParam("time") String time) {
 
-        List<PlaneSeatStruct> seats = flightService.getAvailableSeats(flightId, airline, type, planeTypeId);
+        List<PlaneSeatStruct> seats = flightService.getAvailableSeats(flightId, airline, type, planeTypeId, time);
 
         return ApiResult.success(seats);
     }

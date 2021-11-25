@@ -20,6 +20,8 @@ public class FlightInfo {
 
     private String toAirport;
 
+    private Integer planeTypeId;
+
     private String planeTypeName;
 
     private Timestamp startTime;

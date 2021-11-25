@@ -16,5 +16,5 @@ public class PlaneSeatStruct {
 
   private String type;
 
-
+  private Integer planeTypeId;
 }
