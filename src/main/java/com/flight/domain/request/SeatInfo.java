@@ -9,9 +9,9 @@ import lombok.Data;
 @Data
 public class SeatInfo {
 
-    private String idCardNum;
-
     private Integer row;
 
     private Integer column;
+
+    private Integer recordId;
 }

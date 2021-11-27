@@ -65,18 +65,18 @@ public class RecordService {
      * 值机
      */
     @Transactional(rollbackFor = Exception.class)
-    public void checkin(Integer recordId, String airline, Integer planeTypeId, List<SeatInfo> seatInfos) {
+    public void checkin(String airline, Integer planeTypeId, List<SeatInfo> seatInfos) {
         if (seatInfos == null) {
             return;
         }
 
         for (SeatInfo seatInfo: seatInfos) {
             if (airlineConfig.getAirline1().equals(airline)) {
-                recordMapper1.updateSeatId(recordId, planeTypeId, seatInfo.getRow(), seatInfo.getColumn());
+                recordMapper1.updateSeatId(seatInfo.getRecordId(), planeTypeId, seatInfo.getRow(), seatInfo.getColumn());
             } else if (airlineConfig.getAirline2().equals(airline)) {
-                recordMapper2.updateSeatId(recordId, planeTypeId, seatInfo.getRow(), seatInfo.getColumn());
+                recordMapper2.updateSeatId(seatInfo.getRecordId(), planeTypeId, seatInfo.getRow(), seatInfo.getColumn());
             } else {
-                recordMapper3.updateSeatId(recordId, planeTypeId, seatInfo.getRow(), seatInfo.getColumn());
+                recordMapper3.updateSeatId(seatInfo.getRecordId(), planeTypeId, seatInfo.getRow(), seatInfo.getColumn());
             }
         }
     }

@@ -44,14 +44,13 @@ public class RecordController {
      * 值机
      */
     @PostMapping("/checkin")
-    public ApiResult<?> checkin(@RequestParam("recordId") Integer recordId,
-        @NotBlank(message = "airline不能为空") @RequestParam("airline") String airline,
+    public ApiResult<?> checkin(@NotBlank(message = "airline不能为空") @RequestParam("airline") String airline,
         @RequestParam("planeTypeId") Integer planeTypeId,
         @NotBlank(message = "seats不能为空") @RequestParam("seats") String seats) {
 
         List<SeatInfo> seatInfos = gson.fromJson(seats, new TypeToken<List<SeatInfo>>() {}.getType());
 
-        recordService.checkin(recordId, airline, planeTypeId, seatInfos);
+        recordService.checkin(airline, planeTypeId, seatInfos);
 
         return ApiResult.success();
     }
