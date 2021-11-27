@@ -3,6 +3,7 @@ package com.flight.service;
 import com.flight.config.AirlineConfig;
 import com.flight.domain.dao.Passenger;
 import com.flight.domain.dto.AutoIncreasedId;
+import com.flight.domain.request.SeatInfo;
 import com.flight.domain.result.OrderInfo;
 import com.flight.mapper.airline1.RecordMapper1;
 import com.flight.mapper.airline2.RecordMapper2;
@@ -38,7 +39,7 @@ public class RecordService {
     /**
      * 预定机票并返回预定信息
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<OrderInfo> order(String airline, Integer flightId,String time) {
         List<OrderInfo> orderInfos = new ArrayList<>(UserUtil.getUsers().size());
 
@@ -58,5 +59,38 @@ public class RecordService {
         }
 
         return orderInfos;
+    }
+
+    /**
+     * 值机
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void checkin(Integer recordId, String airline, Integer planeTypeId, List<SeatInfo> seatInfos) {
+        if (seatInfos == null) {
+            return;
+        }
+
+        for (SeatInfo seatInfo: seatInfos) {
+            if (airlineConfig.getAirline1().equals(airline)) {
+                recordMapper1.updateSeatId(recordId, planeTypeId, seatInfo.getRow(), seatInfo.getColumn());
+            } else if (airlineConfig.getAirline2().equals(airline)) {
+                recordMapper2.updateSeatId(recordId, planeTypeId, seatInfo.getRow(), seatInfo.getColumn());
+            } else {
+                recordMapper3.updateSeatId(recordId, planeTypeId, seatInfo.getRow(), seatInfo.getColumn());
+            }
+        }
+    }
+
+    /**
+     * 退票
+     */
+    public void refund(String airline, Integer recordId) {
+        if (airlineConfig.getAirline1().equals(airline)) {
+            recordMapper1.deleteRecord(recordId);
+        } else if (airlineConfig.getAirline2().equals(airline)) {
+            recordMapper2.deleteRecord(recordId);
+        } else {
+            recordMapper3.deleteRecord(recordId);
+        }
     }
 }
