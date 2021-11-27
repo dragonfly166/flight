@@ -108,6 +108,7 @@ public class FlightService {
      */
     private List<FlightItem> getRoute(List<FlightDetail> flights, String fromAirport, String toAirport)
         throws ParseException {
+
         Map<String, FlightDetail> firstFlightMap = new HashMap<>(flights.size());
         List<FlightItem> routes = new ArrayList<>(flights.size());
         List<List<FlightDetail>> flightsList = new ArrayList<>(flights.size());
@@ -125,7 +126,7 @@ public class FlightService {
         }
         for (FlightDetail flight: flights) {
             FlightDetail first = firstFlightMap.get(flight.getFromAirport());
-            if (first != null && first.getTransitTime() * 60 * 1000 < (first.getStartTime().getTime() - first.getEndTime().getTime()) % (24 * 60 * 60 * 1000)) {
+            if (first != null && first.getTransitTime() * 60 * 1000 < (first.getEndTime().getTime() - first.getStartTime().getTime()) % (24 * 60 * 60 * 1000)) {
                 List<FlightDetail> flightsForRoute = new ArrayList<>();
                 flightsForRoute.add(first);
                 flightsForRoute.add(flight);
@@ -144,8 +145,8 @@ public class FlightService {
                     hasSeat = false;
                 }
 
-                FlightInfo flightInfo = new FlightInfo(flight.getId(), flight.getAirline(), fromAirport,
-                    toAirport, flight.getPlaneTypeId(), flight.getPlaneTypeName(), sdf.format(flight.getStartTime()),
+                FlightInfo flightInfo = new FlightInfo(flight.getId(), flight.getAirline(), flight.getFromAirport(),
+                    flight.getToAirport(), flight.getPlaneTypeId(), flight.getPlaneTypeName(), sdf.format(flight.getStartTime()),
                     sdf.format(flight.getEndTime()), flight.getSeatNum());
                 flightInfos.add(flightInfo);
                 cost += flight.getCost();
@@ -171,6 +172,7 @@ public class FlightService {
      */
     public List<FlightItem> getList(String fromAirport, String toAirport, String time)
         throws ParseException {
+
         List<FlightDetail> flights1 = flightMapper1.queryFlights(fromAirport, toAirport, time);
         for (FlightDetail flight: flights1) {
             flight.setAirline(airlineConfig.getAirline1());
