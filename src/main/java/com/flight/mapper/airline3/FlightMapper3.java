@@ -6,7 +6,6 @@ import com.flight.domain.dto.FlightDetail;
 import com.flight.domain.result.FlightDetailItem;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
 
@@ -56,7 +55,7 @@ public interface FlightMapper3 {
      * 查询可用的座位信息
      */
     @Select("SELECT * FROM plane_seat_struct WHERE plane_type_id = #{planeTypeId} AND type = #{type} "
-                + "AND id NOT IN (SELECT plane_seat_struct_id FROM flight_record WHERE is_deleted = 0 AND create_time = #{time} AND flight_id = #{flightId})")
+            + "AND id NOT IN (SELECT plane_seat_struct_id FROM flight_record WHERE is_deleted = 0 AND create_time = #{time} AND flight_id = #{flightId})")
     @Result(column = "plane_type_id", property = "planeTypeId")
     List<PlaneSeatStruct> queryAvailableSeats(Integer flightId, String type, Integer planeTypeId, String time);
 }
