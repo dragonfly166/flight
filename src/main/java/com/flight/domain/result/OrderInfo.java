@@ -13,6 +13,8 @@ public class OrderInfo {
 
     private String airline;
 
+    private String name;
+
     private String idCardNum;
 
     private Integer recordId;

@@ -55,7 +55,7 @@ public class RecordService {
                 recordMapper3.insertRecord(flightId, time, autoIncreasedId.getId(), autoIncreasedId);
             }
 
-            orderInfos.add(new OrderInfo(airline, passenger.getIdCardNum(), autoIncreasedId.getId()));
+            orderInfos.add(new OrderInfo(airline, passenger.getName(), passenger.getIdCardNum(), autoIncreasedId.getId()));
         }
 
         return orderInfos;
