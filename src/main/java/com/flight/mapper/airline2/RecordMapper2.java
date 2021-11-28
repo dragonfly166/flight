@@ -1,11 +1,7 @@
 package com.flight.mapper.airline2;
 
 import com.flight.domain.dto.AutoIncreasedId;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 /**
  * @author sunlongfei
@@ -32,10 +28,9 @@ public interface RecordMapper2 {
     /**
      * 更新购票记录座位信息
      */
-    @Update("UPDATE flight_record SET plane_seat_struct_id = "
-            + "(SELECT plane_seat_struct.id FROM plane_seat_struct WHERE `row` = #{row} AND `column` = #{column} AND plane_type_id = #{planeTypeId}) "
+    @Update("UPDATE flight_record SET plane_seat_struct_id = #{seatId} "
             + "WHERE id = #{recordId}")
-    void updateSeatId(Integer recordId, Integer planeTypeId, Integer row, Integer column);
+    void updateSeatId(Integer recordId, Integer planeTypeId, Integer seatId);
 
     /**
      * 删除购票记录(软删除)

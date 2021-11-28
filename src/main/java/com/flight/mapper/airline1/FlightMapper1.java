@@ -48,7 +48,7 @@ public interface FlightMapper1 {
     @Select("SELECT flight.id AS flightId, flight.plane_type_id AS planeTypeId, plane_type.name AS planeTypeName, type, COUNT(*) AS remain,"
             + "(SELECT price FROM flight_seat_price WHERE seat_type = type AND flight_id = flight.id) AS cost "
             + "FROM flight, plane_type, plane_seat_struct WHERE flight.plane_type_id = plane_type.id AND plane_seat_struct.plane_type_id = plane_type.id "
-            + "AND plane_seat_struct.id NOT IN (SELECT plane_seat_struct_id FROM flight_record WHERE is_deleted = 0 AND flight_id = flight.id AND create_time = #{time}) "
+            + "AND plane_seat_struct.id NOT IN (SELECT plane_seat_struct_id FROM flight_record WHERE is_deleted = 0 AND flight_id = flight.id AND create_time = #{time} AND flight_record.plane_seat_struct_id IS NOT NULL) "
             + "AND flight.id = #{flightId} GROUP BY type")
     List<FlightDetailItem> queryFlightDetail(Integer flightId, String time);
 
@@ -56,7 +56,7 @@ public interface FlightMapper1 {
      * 查询可用的座位信息
      */
     @Select("SELECT * FROM plane_seat_struct WHERE plane_type_id = #{planeTypeId} AND type = #{type} "
-            + "AND id NOT IN (SELECT plane_seat_struct_id FROM flight_record WHERE is_deleted = 0 AND create_time = #{time} AND flight_id = #{flightId})")
+            + "AND id NOT IN (SELECT plane_seat_struct_id FROM flight_record WHERE is_deleted = 0 AND create_time = #{time} AND flight_id = #{flightId} AND flight_record.plane_seat_struct_id IS NOT NULL)")
     @Result(column = "plane_type_id", property = "planeTypeId")
     List<PlaneSeatStruct> queryAvailableSeats(Integer flightId, String type, Integer planeTypeId, String time);
 }

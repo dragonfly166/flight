@@ -32,10 +32,9 @@ public interface RecordMapper1 {
     /**
      * 更新购票记录座位信息
      */
-    @Update("UPDATE flight_record SET plane_seat_struct_id = "
-            + "(SELECT plane_seat_struct.id FROM plane_seat_struct WHERE `row` = #{row} AND `column` = #{column} AND plane_type_id = #{planeTypeId}) "
+    @Update("UPDATE flight_record SET plane_seat_struct_id = #{seatId} "
             + "WHERE id = #{recordId}")
-    void updateSeatId(Integer recordId, Integer planeTypeId, Integer row, Integer column);
+    void updateSeatId(Integer recordId, Integer planeTypeId, Integer seatId);
 
     /**
      * 删除购票记录(软删除)

@@ -72,11 +72,11 @@ public class RecordService {
 
         for (SeatInfo seatInfo: seatInfos) {
             if (airlineConfig.getAirline1().equals(airline)) {
-                recordMapper1.updateSeatId(seatInfo.getRecordId(), planeTypeId, seatInfo.getRow(), seatInfo.getColumn());
+                recordMapper1.updateSeatId(seatInfo.getRecordId(), planeTypeId, seatInfo.getSeatId());
             } else if (airlineConfig.getAirline2().equals(airline)) {
-                recordMapper2.updateSeatId(seatInfo.getRecordId(), planeTypeId, seatInfo.getRow(), seatInfo.getColumn());
+                recordMapper2.updateSeatId(seatInfo.getRecordId(), planeTypeId, seatInfo.getSeatId());
             } else {
-                recordMapper3.updateSeatId(seatInfo.getRecordId(), planeTypeId, seatInfo.getRow(), seatInfo.getColumn());
+                recordMapper3.updateSeatId(seatInfo.getRecordId(), planeTypeId, seatInfo.getSeatId());
             }
         }
     }
