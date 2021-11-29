@@ -40,7 +40,7 @@ public class RecordService {
      * 预定机票并返回预定信息
      */
     @Transactional(rollbackFor = Exception.class)
-    public List<OrderInfo> order(String airline, Integer flightId,String time) {
+    public List<OrderInfo> order(String airline, Integer flightId, String time) {
         List<OrderInfo> orderInfos = new ArrayList<>(UserUtil.getUsers().size());
 
         for (Passenger passenger: UserUtil.getUsers()) {
