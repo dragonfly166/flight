@@ -127,6 +127,9 @@ public class FlightService {
         }
         for (FlightDetail flight: flights) {
             List<FlightDetail> firsts = firstFlightMap.get(flight.getFromAirport());
+            if (firsts == null) {
+                continue;
+            }
             for (FlightDetail first: firsts) {
                 if (first.getTransitTime() * 60 * 1000 < (first.getEndTime().getTime() - first.getStartTime().getTime()) % (24 * 60 * 60 * 1000)) {
                     List<FlightDetail> flightsForRoute = new ArrayList<>();
