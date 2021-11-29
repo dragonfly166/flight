@@ -143,22 +143,14 @@ public class FlightService {
         for (List<FlightDetail> flightsForRoute: flightsList) {
             List<FlightInfo> flightInfos = new ArrayList<>(2);
             Integer cost = 0;
-            boolean hasSeat = true;
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
             for (FlightDetail flight: flightsForRoute) {
-                if (flight.getSeatNum() == 0) {
-                    hasSeat = false;
-                }
-
                 FlightInfo flightInfo = new FlightInfo(flight.getId(), flight.getAirline(), flight.getFromAirport(),
                     flight.getToAirport(), flight.getPlaneTypeId(), flight.getPlaneTypeName(), sdf.format(flight.getStartTime()),
                     sdf.format(flight.getEndTime()), flight.getSeatNum());
                 flightInfos.add(flightInfo);
                 cost += flight.getCost();
-            }
-            if (!hasSeat) {
-                continue;
             }
 
             long startTime = sdf.parse(flightInfos.get(0).getStartTime()).getTime();
