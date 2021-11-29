@@ -109,7 +109,7 @@ public class FlightService {
     private List<FlightItem> getRoute(List<FlightDetail> flights, String fromAirport, String toAirport)
         throws ParseException {
 
-        Map<String, FlightDetail> firstFlightMap = new HashMap<>(flights.size());
+        Map<String, List<FlightDetail>> firstFlightMap = new HashMap<>(flights.size());
         List<FlightItem> routes = new ArrayList<>(flights.size());
         List<List<FlightDetail>> flightsList = new ArrayList<>(flights.size());
 
@@ -121,16 +121,19 @@ public class FlightService {
                 continue;
             }
             if (flight.getFromAirport().equals(fromAirport)) {
-                firstFlightMap.put(flight.getToAirport(), flight);
+                firstFlightMap.computeIfAbsent(flight.getToAirport(), k -> new ArrayList<>());
+                firstFlightMap.get(flight.getToAirport()).add(flight);
             }
         }
         for (FlightDetail flight: flights) {
-            FlightDetail first = firstFlightMap.get(flight.getFromAirport());
-            if (first != null && first.getTransitTime() * 60 * 1000 < (first.getEndTime().getTime() - first.getStartTime().getTime()) % (24 * 60 * 60 * 1000)) {
-                List<FlightDetail> flightsForRoute = new ArrayList<>();
-                flightsForRoute.add(first);
-                flightsForRoute.add(flight);
-                flightsList.add(flightsForRoute);
+            List<FlightDetail> firsts = firstFlightMap.get(flight.getFromAirport());
+            for (FlightDetail first: flights) {
+                if (first != null && first.getTransitTime() * 60 * 1000 < (first.getEndTime().getTime() - first.getStartTime().getTime()) % (24 * 60 * 60 * 1000)) {
+                    List<FlightDetail> flightsForRoute = new ArrayList<>();
+                    flightsForRoute.add(first);
+                    flightsForRoute.add(flight);
+                    flightsList.add(flightsForRoute);
+                }
             }
         }
 
